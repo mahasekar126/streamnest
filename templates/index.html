@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mini Netflix</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #121212;
+      color: #fff;
+      min-height: 100vh;
+    }
+    .navbar {
+      background-color: #1f1f1f;
+    }
+    .category-title {
+      font-size: 1.4rem;
+      margin: 20px 0 10px;
+      font-weight: bold;
+    }
+    .carousel-container {
+      overflow-x: auto;
+      white-space: nowrap;
+      padding-bottom: 10px;
+    }
+    .video-card {
+      display: inline-block;
+      width: 220px;
+      margin-right: 10px;
+      background-color: #1e1e1e;
+      border-radius: 10px;
+      transition: transform 0.2s;
+      vertical-align: top;
+      padding-bottom: 10px;
+    }
+    .video-card:hover {
+      transform: scale(1.05);
+    }
+    .video-card img {
+      width: 100%;
+      border-radius: 10px;
+    }
+    .video-card-title {
+      padding: 5px;
+      font-size: 0.9rem;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .video-card-description {
+      font-size: 0.8rem;
+      padding: 0 5px;
+      color: #ccc;
+      height: 40px;
+      overflow: hidden;
+    }
+    .video-card-buttons {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 5px;
+    }
+    .search-input {
+      max-width: 300px;
+    }
+    .upload-btn {
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark px-4">
+  <a class="navbar-brand" href="{{ url_for('index') }}">Mini Netflix</a>
+
+  <!-- Search -->
+  <form class="d-flex ms-auto me-2" action="{{ url_for('index') }}" method="GET">
+    <input class="form-control me-2 search-input" type="search" placeholder="Search videos..." name="q" value="{{ request.args.get('q', '') }}">
+    <button class="btn btn-outline-light" type="submit">Search</button>
+  </form>
+
+  <!-- Welcome & Logout -->
+  {% if current_user.is_authenticated %}
+    <span class="text-light me-3">Welcome, {{ current_user.email }}</span>
+    <a href="{{ url_for('logout') }}" class="btn btn-outline-light">Logout</a>
+  {% endif %}
+</nav>
+
+<div class="container mt-4">
+
+  <!-- Upload Form -->
+  <div class="card mb-4 bg-dark text-light p-3">
+    <h5>Upload New Video</h5>
+    <form action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data" class="d-flex flex-wrap align-items-end">
+      <div class="mb-2 me-2">
+        <input type="file" name="video" class="form-control" required>
+      </div>
+      <div class="mb-2 me-2">
+        <input type="text" name="category" placeholder="Category" class="form-control">
+      </div>
+      <div class="mb-2 me-2">
+        <input type="text" name="description" placeholder="Video description" class="form-control">
+      </div>
+      <button type="submit" class="btn btn-primary mb-2 upload-btn">Upload</button>
+    </form>
+  </div>
+
+  {% set categories = {} %}
+  {% for video in videos %}
+    {% if video.category %}
+      {% if video.category not in categories %}
+        {% set _ = categories.update({video.category: []}) %}
+      {% endif %}
+      {% set _ = categories[video.category].append(video) %}
+    {% else %}
+      {% if 'Uncategorized' not in categories %}
+        {% set _ = categories.update({'Uncategorized': []}) %}
+      {% endif %}
+      {% set _ = categories['Uncategorized'].append(video) %}
+    {% endif %}
+  {% endfor %}
+
+  {% for category, vids in categories.items() %}
+    <h5 class="category-title">{{ category }}</h5>
+    <div class="carousel-container">
+      {% for vid in vids %}
+      <div class="video-card">
+        <a href="{{ url_for('watch', video_id=vid.id) }}">
+          <img src="{{ vid.thumbnail_url }}" alt="{{ vid.title }}">
+          <div class="video-card-title">{{ vid.title }}</div>
+        </a>
+        <div class="video-card-description">
+          {{ vid.description or 'No description provided.' }}
+        </div>
+        <div class="video-card-buttons">
+          <a href="{{ url_for('watch', video_id=vid.id) }}" class="btn btn-sm btn-success">Watch</a>
+          <a href="{{ vid.url }}" target="_blank" class="btn btn-sm btn-info">Share</a>
+          <form action="{{ url_for('delete_video', video_id=vid.id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this video?');" style="display:inline;">
+            <button class="btn btn-sm btn-danger">Delete</button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% endfor %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

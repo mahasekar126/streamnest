@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ video.title }} - Mini Netflix</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #121212;
+      color: #fff;
+      min-height: 100vh;
+    }
+    .navbar {
+      background-color: #1f1f1f;
+    }
+    .video-player {
+      width: 100%;
+      max-width: 900px;
+      margin: 20px auto;
+      display: block;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.7);
+    }
+    .recommended-title {
+      margin: 20px 0 10px;
+      font-weight: bold;
+      font-size: 1.3rem;
+    }
+    .card {
+      background-color: #1e1e1e;
+      border: none;
+      border-radius: 10px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: scale(1.05);
+    }
+    .card img {
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark px-4">
+  <a class="navbar-brand" href="{{ url_for('index') }}">Mini Netflix</a>
+  <div class="ms-auto">
+    <a href="{{ url_for('logout') }}" class="btn btn-outline-light">Logout</a>
+  </div>
+</nav>
+
+<div class="container mt-4 text-center">
+  <!-- Video Player -->
+  <h3>{{ video.title }}</h3>
+  <video class="video-player" controls>
+    <source src="{{ video.url }}" type="video/mp4">
+    Your browser does not support HTML5 video.
+  </video>
+
+  <!-- Recommended Videos -->
+  {% set recommended = [] %}
+  {% for v in videos %}
+    {% if v.category == video.category and v.id != video.id %}
+      {% set _ = recommended.append(v) %}
+    {% endif %}
+  {% endfor %}
+
+  {% if recommended %}
+  <h4 class="recommended-title">Recommended</h4>
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3 mb-4">
+    {% for rec in recommended %}
+    <div class="col">
+      <div class="card h-100">
+        <a href="{{ url_for('watch', video_id=rec.id) }}">
+          <img src="{{ rec.thumbnail_url }}" class="card-img-top" alt="{{ rec.title }}">
+        </a>
+        <div class="card-body p-2">
+          <h6 class="card-title text-truncate">{{ rec.title }}</h6>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
