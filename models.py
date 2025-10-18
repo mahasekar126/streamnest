@@ -5,19 +5,6 @@ from flask_login import UserMixin
 
 db = SQLAlchemy()
 
-class Video(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(256), nullable=False)
-    public_id = db.Column(db.String(256), nullable=False, unique=True)
-    url = db.Column(db.String(1024), nullable=False)
-    category = db.Column(db.String(100), default='Uncategorized')
-    description = db.Column(db.Text)  # Added description field
-    thumbnail_url = db.Column(db.String(1024))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-    def __repr__(self):
-        return f"<Video {self.title}>"
-
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(150), unique=True, nullable=False)
@@ -32,3 +19,20 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return f"<User {self.email}>"
+
+
+class Video(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(256), nullable=False)
+    public_id = db.Column(db.String(256), nullable=False, unique=True)
+    url = db.Column(db.String(1024), nullable=False)
+    category = db.Column(db.String(100), default='Uncategorized')
+    description = db.Column(db.Text)
+    thumbnail_url = db.Column(db.String(1024))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship('User', backref=db.backref('videos', lazy=True))
+
+    def __repr__(self):
+        return f"<Video {self.title}>"

@@ -2,65 +2,329 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Login - Mini Netflix</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In - Mini Netflix</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      background: linear-gradient(to right, #6a11cb, #2575fc);
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?ixlib=rb-4.0.3&auto=format&fit=crop&w=2069&q=80') center/cover no-repeat;
+      opacity: 0.1;
+      z-index: -1;
+    }
+
+    .netflix-logo {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #e50914;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+      margin-bottom: 2rem;
+    }
+
+    .login-container {
+      background: rgba(0, 0, 0, 0.85);
+      border-radius: 8px;
+      padding: 3rem 4rem;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      max-width: 450px;
+      width: 100%;
+    }
+
+    .form-title {
+      color: #fff;
+      font-size: 2rem;
+      font-weight: 500;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      color: #b3b3b3;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .form-control {
+      background: #333;
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      padding: 1rem;
+      font-size: 1rem;
+      width: 100%;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+      background: #333;
+      border: 2px solid #e50914;
+      box-shadow: 0 0 0 0.2rem rgba(229, 9, 20, 0.25);
+      color: #fff;
+    }
+
+    .form-control::placeholder {
+      color: #8c8c8c;
+    }
+
+    .btn-netflix {
+      background: #e50914;
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 1rem;
+      width: 100%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 1rem;
+    }
+
+    .btn-netflix:hover {
+      background: #f40612;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(229, 9, 20, 0.4);
+    }
+
+    .form-check {
+      margin: 1rem 0;
+    }
+
+    .form-check-input:checked {
+      background-color: #e50914;
+      border-color: #e50914;
+    }
+
+    .form-check-label {
+      color: #b3b3b3;
+      font-size: 0.9rem;
+    }
+
+    .divider {
+      border-top: 1px solid #333;
+      margin: 2rem 0;
+      position: relative;
+    }
+
+    .divider::before {
+      content: 'OR';
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.85);
+      color: #b3b3b3;
+      padding: 0 1rem;
+      font-size: 0.8rem;
+    }
+
+    .social-login {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .btn-social {
+      flex: 1;
+      padding: 0.75rem;
+      border: 1px solid #333;
+      background: transparent;
+      color: #b3b3b3;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
       display: flex;
       align-items: center;
       justify-content: center;
+      gap: 0.5rem;
     }
-    .card {
-      border-radius: 1rem;
+
+    .btn-social:hover {
+      background: #333;
+      color: #fff;
     }
-    .form-control:focus {
-      box-shadow: none;
+
+    .register-link {
+      text-align: center;
+      margin-top: 2rem;
+      color: #b3b3b3;
+      font-size: 0.9rem;
+    }
+
+    .register-link a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .register-link a:hover {
+      text-decoration: underline;
+    }
+
+    .alert {
+      background: rgba(229, 9, 20, 0.1);
+      border: 1px solid #e50914;
+      color: #fff;
+      border-radius: 4px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .floating-shapes {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow: hidden;
+      z-index: -1;
+    }
+
+    .shape {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(229, 9, 20, 0.1);
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .shape:nth-child(1) {
+      width: 80px;
+      height: 80px;
+      top: 10%;
+      left: 10%;
+      animation-delay: 0s;
+    }
+
+    .shape:nth-child(2) {
+      width: 60px;
+      height: 60px;
+      top: 20%;
+      right: 10%;
+      animation-delay: 2s;
+    }
+
+    .shape:nth-child(3) {
+      width: 100px;
+      height: 100px;
+      bottom: 10%;
+      left: 20%;
+      animation-delay: 4s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+
+    @media (max-width: 768px) {
+      .login-container {
+        padding: 2rem 2rem;
+        margin: 1rem;
+      }
+
+      .netflix-logo {
+        font-size: 2rem;
+      }
+
+      .form-title {
+        font-size: 1.5rem;
+      }
     }
   </style>
 </head>
 <body>
-<div class="container">
-  <div class="row justify-content-center">
-    <div class="col-md-5">
-      <div class="card shadow-lg p-4">
-        <h3 class="card-title text-center mb-4">Login</h3>
+  <div class="floating-shapes">
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+  </div>
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            {% for category, message in messages %}
-              <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-              </div>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
+  <div class="container d-flex align-items-center justify-content-center min-vh-100">
+    <div class="login-container">
+      <div class="text-center">
+        <div class="netflix-logo">Mini Netflix</div>
+      </div>
 
-        <form method="POST">
-          <div class="mb-3">
-            <label>Email</label>
-            <input type="email" class="form-control" name="email" placeholder="Enter your email" required>
-          </div>
-          <div class="mb-3">
-            <label>Password</label>
-            <input type="password" class="form-control" name="password" placeholder="Enter password" required>
-          </div>
-          <div class="mb-3 form-check">
-            <input type="checkbox" class="form-check-input" name="remember" id="remember">
-            <label class="form-check-label" for="remember">Remember Me</label>
-          </div>
-          <button type="submit" class="btn btn-primary w-100">Login</button>
-        </form>
-        <p class="mt-3 text-center">
-          Don't have an account? <a href="{{ url_for('register') }}">Register</a>
-        </p>
+      <h1 class="form-title">Sign In</h1>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ 'danger' if category == 'danger' else 'success' }}" role="alert">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form method="POST">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-control" name="email" placeholder="Enter your email" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-control" name="password" placeholder="Enter password" required>
+        </div>
+
+        <div class="form-check">
+          <input type="checkbox" class="form-check-input" name="remember" id="remember">
+          <label class="form-check-label" for="remember">Remember me</label>
+        </div>
+
+        <button type="submit" class="btn-netflix">
+          <i class="fas fa-sign-in-alt me-2"></i>Sign In
+        </button>
+      </form>
+
+      <div class="divider"></div>
+
+      <div class="social-login">
+        <a href="{{ url_for('google_login') }}" class="btn-social">
+          <i class="fab fa-google"></i>
+          Google
+        </a>
+        <a href="#" class="btn-social">
+          <i class="fab fa-facebook-f"></i>
+          Facebook
+        </a>
+      </div>
+
+      <div class="register-link">
+        New to Mini Netflix? <a href="{{ url_for('register') }}">Sign up now</a>
       </div>
     </div>
   </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
