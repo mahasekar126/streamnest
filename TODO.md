@@ -1,4 +1,4 @@
-# TODO List for Mini Netflix App Updates
+# TODO List for StreamNest 🎥 App Updates
 
 ## 1. Make Videos Public
 - [x] Remove @login_required from the index route in app.py to allow everyone to view videos.

@@ -42,7 +42,7 @@ login_manager.init_app(app)
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return db.session.get(User, int(user_id))
 
 # ------------------ OAUTH ------------------
 oauth = OAuth(app)
@@ -228,7 +228,10 @@ def upload():
 @app.route('/delete/<int:video_id>', methods=['POST'])
 @login_required
 def delete_video(video_id):
-    video = Video.query.get_or_404(video_id)
+    video = db.session.get(Video, video_id)
+    if not video:
+        flash("Video not found!", "danger")
+        return redirect(url_for('index'))
     # Check if current user owns the video
     if video.user_id != current_user.id:
         flash("You can only delete your own videos!", "danger")
@@ -246,7 +249,10 @@ def delete_video(video_id):
 
 @app.route('/watch/<int:video_id>')
 def watch(video_id):
-    video = Video.query.get_or_404(video_id)
+    video = db.session.get(Video, video_id)
+    if not video:
+        flash("Video not found!", "danger")
+        return redirect(url_for('index'))
     videos = Video.query.order_by(Video.created_at.desc()).all()
     return render_template('watch.html', video=video, videos=videos)
 

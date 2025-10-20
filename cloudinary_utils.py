@@ -10,10 +10,12 @@ def init_cloudinary(app):
     )
 
 def upload_video(file, filename):
+    import uuid
+    unique_id = str(uuid.uuid4())[:8]
+    public_id = f"uploads/{filename.split('.')[0]}_{unique_id}"
     return cloudinary.uploader.upload(
         file,
         resource_type='video',
-        folder='uploads',
-        public_id=filename.split('.')[0],
+        public_id=public_id,
         overwrite=True
     )
